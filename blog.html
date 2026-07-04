@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Smart Monke</title>
+  <meta name="description" content="All posts on Smart Monke — coding tutorials, tips, snippets, and devlogs." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐒</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Nav ── -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo" aria-label="Smart Monke home">
+        <div class="nav__logo-icon" aria-hidden="true">🐒</div>
+        Smart Monke
+      </a>
+      <ul class="nav__links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="blog.html" class="active">Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Blog list ── -->
+  <main id="main-content" class="container">
+    <div class="blog-list">
+      <header class="blog-list__header">
+        <h1 class="blog-list__title">All Posts</h1>
+        <p class="blog-list__subtitle">Everything I've written, newest first.</p>
+      </header>
+
+      <div id="posts-container">
+        <div class="spinner" aria-label="Loading posts…"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <a href="index.html" class="footer__logo">Smart Monke</a>
+        <p class="footer__tagline">
+          A cozy corner of the internet for coding tutorials, tips, devlogs,
+          and the occasional wild idea. 🐒
+        </p>
+      </div>
+      <div class="footer__nav">
+        <p class="footer__nav-title">Navigate</p>
+        <ul class="footer__nav-links" role="list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="blog.html">All posts</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span class="footer__copy">&copy; 2026 Smart Monke &mdash; made with &hearts; &amp; bananas</span>
+      <span class="footer__monke" aria-hidden="true">🐒</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="app.js"></script>
+  <script>
+    (async () => {
+      const container = document.getElementById('posts-container');
+      try {
+        const posts = await Posts.getAll();
+        if (!posts.length) {
+          container.innerHTML = `
+            <div class="state-empty">
+              <div class="state-empty__icon">🐒</div>
+              <p class="state-empty__text">Nothing here yet — posts coming soon!</p>
+            </div>`;
+          return;
+        }
+
+        const grid = document.createElement('div');
+        grid.className = 'posts-grid';
+        grid.setAttribute('role', 'list');
+
+        posts.forEach(post => {
+          const card = document.createElement('a');
+          card.href = `post.html?slug=${post.slug}`;
+          card.className = 'post-card';
+          card.setAttribute('role', 'listitem');
+          card.setAttribute('aria-label', post.title);
+          card.innerHTML = `
+            ${post.tag ? `<span class="post-card__tag">${post.tag}</span>` : ''}
+            <h2 class="post-card__title">${post.title}</h2>
+            <p class="post-card__excerpt">${post.excerpt}</p>
+            <div class="post-card__meta">
+              <span>${formatDate(post.publishedDate)}</span>
+            </div>`;
+          grid.appendChild(card);
+        });
+
+        container.innerHTML = '';
+        container.appendChild(grid);
+        observeCards();
+
+      } catch (err) {
+        container.innerHTML = `
+          <div class="state-empty">
+            <div class="state-empty__icon">🙈</div>
+            <p class="state-empty__text">Couldn't load posts.<br><small>${err.message}</small></p>
+          </div>`;
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post — Smart Monke</title>
+  <meta name="description" content="Read this post on Smart Monke." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐒</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Nav ── -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="index.html" class="nav__logo" aria-label="Smart Monke home">
+        <div class="nav__logo-icon" aria-hidden="true">🐒</div>
+        Smart Monke
+      </a>
+      <ul class="nav__links" role="list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="blog.html">Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Post ── -->
+  <main id="main-content" class="container post-page">
+    <div id="post-container">
+      <div class="spinner" aria-label="Loading post…"></div>
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <a href="index.html" class="footer__logo">Smart Monke</a>
+        <p class="footer__tagline">
+          A cozy corner of the internet for coding tutorials, tips, devlogs,
+          and the occasional wild idea. 🐒
+        </p>
+      </div>
+      <div class="footer__nav">
+        <p class="footer__nav-title">Navigate</p>
+        <ul class="footer__nav-links" role="list">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="blog.html">All posts</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span class="footer__copy">&copy; 2026 Smart Monke &mdash; made with &hearts; &amp; bananas</span>
+      <span class="footer__monke" aria-hidden="true">🐒</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="app.js"></script>
+  <script>
+    (async () => {
+      const container = document.getElementById('post-container');
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get('slug');
+
+      if (!slug) {
+        container.innerHTML = `
+          <div class="state-empty">
+            <div class="state-empty__icon">🙈</div>
+            <p class="state-empty__text">No post specified. <a href="blog.html">Go back to blog</a>.</p>
+          </div>`;
+        return;
+      }
+
+      try {
+        const [post, mdText] = await Promise.all([
+          Posts.get(slug),
+          Posts.getContent(slug),
+        ]);
+
+        if (!post) throw new Error(`Post "${slug}" not found in posts.json`);
+
+        // Update page title and meta
+        document.title = `${post.title} — Smart Monke`;
+        document.querySelector('meta[name="description"]').setAttribute('content', post.excerpt);
+
+        const html = renderMarkdown(mdText);
+
+        container.innerHTML = `
+          <article aria-labelledby="post-title">
+            <header class="post-header">
+              <a href="blog.html" class="post-header__back" aria-label="Back to blog">
+                ← Back to blog
+              </a>
+              ${post.tag ? `<div class="post-header__tag">${post.tag}</div>` : ''}
+              <h1 class="post-header__title" id="post-title">${post.title}</h1>
+              <div class="post-header__meta">
+                ${post.author ? `<span>${post.author}</span><span aria-hidden="true">·</span>` : ''}
+                <time datetime="${post.publishedDate}">${formatDate(post.publishedDate)}</time>
+                <span aria-hidden="true">·</span>
+                <span>${readingTime(mdText)}</span>
+                ${post.updatedDate ? `<span aria-hidden="true">·</span><span>updated ${formatDate(post.updatedDate)}</span>` : ''}
+              </div>
+            </header>
+            <div class="prose">${html}</div>
+          </article>
+
+          <nav class="post-nav" aria-label="Post navigation" style="margin-top:3.5rem; padding-top:2rem; border-top:1px solid var(--cream-darker);">
+            <a href="blog.html" style="color:var(--ink-light); font-size:0.9rem;">← All posts</a>
+          </nav>`;
+
+      } catch (err) {
+        container.innerHTML = `
+          <div class="state-empty">
+            <div class="state-empty__icon">🙈</div>
+            <p class="state-empty__text">Couldn't load this post.<br><small>${err.message}</small></p>
+            <br><a href="blog.html" style="color:var(--accent);">← Back to blog</a>
+          </div>`;
+      }
+    })();
+  </script>
+</body>
+</html>
