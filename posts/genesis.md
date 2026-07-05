@@ -19,13 +19,13 @@ That leaves the only perfectly rational option: build a game engine from scratch
 
 Eric Froemling did it. The Rain World developer did it. Nothing says I can't... if we conveniently ignore my severe lack of skill, experience, discipline, and occasionally, common sense.
 
-Anyway, I'm somewhere in the Rust Book. Chapter... something. I've lost count. I can kind of see why Rustaceans behave like members of a cult now.
+Anyway, I'm somewhere in the Rust Book. Chapter... something. I've lost count. I still don't see why Rustaceans behave like cultists, but maybe I will, with time.
 
 So, what have I learned so far?
 
 1. **The borrow checker.** One big motherfucker, but I'd still take it over `malloc` and `calloc` any day. (Disclaimer: this opinion is highly subject to change.)
 
-2. **Structs, enums, and traits.** I've done a bit of OOP in Python before, and that's probably the only thing stopping this from feeling like completely uncharted territory. It's still uncharted—just, like, 98% instead of 100%.
+2. **Structs, enums, and traits.** I've done a bit of OOP in Python before, and that's probably the only thing stopping this from feeling like completely uncharted territory. It's still uncharted; just, like, 98% instead of 100%.
 
 3. **Basic Rust syntax.** Enough to write a CLI dungeon crawler. It's not a very good dungeon crawler. It's even less fun. But it has a game loop, so by the ordained laws of CS, it's a game.
 
