@@ -82,15 +82,10 @@ img { max-width: 100%; display: block; }
 }
 
 .nav__logo-icon {
-  width: 26px;
-  height: 26px;
-  background: var(--ink);
-  color: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
+  height: 30px;
+  width: auto;
   flex-shrink: 0;
+  display: block;
 }
 
 .nav__links {
@@ -479,12 +474,20 @@ img { max-width: 100%; display: block; }
 }
 
 .footer__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--ink);
   margin-bottom: 0.75rem;
-  display: block;
   text-transform: uppercase;
+}
+
+.footer__logo-icon {
+  height: 34px;
+  width: auto;
+  flex-shrink: 0;
 }
 
 .footer__tagline {
