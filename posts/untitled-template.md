@@ -1,12 +1,14 @@
 ---
 title: Untitled post
-publishedDate: 2026-07-04
+publishedDate: 2026-07-04 09:00
 tag: draft
 author: You
 draft: true
 ---
 
 Write your post here in plain Markdown.
+
+<!-- publishedDate accepts "YYYY-MM-DD" or "YYYY-MM-DD HH:MM" (24hr, WAT) -->
 
 ## A heading
 

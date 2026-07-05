@@ -157,10 +157,19 @@ function renderMarkdown(md) {
 }
 
 // ── Date formatter ───────────────────────────────────────────────
-function formatDate(iso) {
-  return new Date(iso).toLocaleDateString('en-GB', {
+// Accepts "YYYY-MM-DD" or "YYYY-MM-DD HH:MM" (treated as WAT wall-clock time,
+// not converted — West Africa Time has no DST so this is safe).
+function formatDate(value) {
+  const [datePart, timePart] = String(value).trim().split(/\s+/);
+  const date = new Date(`${datePart}T00:00:00`);
+
+  const dateStr = date.toLocaleDateString('en-GB', {
     day: 'numeric', month: 'long', year: 'numeric',
   });
+
+  if (!timePart) return dateStr;
+
+  return `${dateStr}, ${timePart} WAT`;
 }
 
 // ── Reading time ─────────────────────────────────────────────────
