@@ -1,9 +1,9 @@
 ---
 title: Nodes That Refuse To Point To Themselves
-publishedDate: 2026-07-06 09:00
+publishedDate: 2026-07-06 10:21 PM
 tag: devlog
 author: You
-excerpt: Tried to implement a linked list in Rust. Ended up in a fistfight with the borrow checker over what "empty" even means.
+excerpt: Tried to implement a linked list in Rust. Ended up in a pointless argument with the borrow checker over what "empty" even means.
 draft: false
 ---
 
