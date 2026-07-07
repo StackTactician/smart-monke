@@ -1,7 +1,7 @@
 ---
 title: Genesis
 publishedDate: 2026-07-04 09:02
-tag: devlog
+tag: ramble
 author: You
 excerpt: Starting a blog, starting a game engine from scratch. Still don't understand why Rustaceans act like they're in a cult.
 draft: false
