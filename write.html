@@ -24,7 +24,7 @@
         <li>
           <button id="open-settings-btn" class="toolbar-btn" style="display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.75rem;" title="Configure publisher endpoint & key">
             <span id="nav-status-dot" class="status-dot" aria-hidden="true"></span>
-            ⚙ <span class="nav-settings-label">Settings</span>
+            <span class="nav-settings-label">Settings</span>
           </button>
         </li>
       </ul>
@@ -38,7 +38,7 @@
     <div id="status-banner" class="status-banner" role="alert" aria-live="polite"></div>
 
     <div class="editor-wrap">
-      <span class="editor-badge">✦ Author Desk</span>
+      <span class="editor-badge">Author Desk</span>
 
       <div class="editor-header-bar">
         <h1 class="editor-heading">Create Post</h1>
@@ -110,7 +110,7 @@
       <!-- Advanced Metadata Options (Collapsible to keep mobile uncluttered) -->
       <details class="editor-meta-details">
         <summary class="editor-meta-summary">
-          <span>▸ Advanced options (Date, Author, Excerpt)</span>
+          <span>+ Advanced options (Date, Author, Excerpt)</span>
         </summary>
         <div class="editor-meta-drawer">
           <div class="editor-meta-grid">
@@ -159,8 +159,8 @@
       <div class="editor-controls-row">
         <!-- View Switcher -->
         <div class="editor-tab-switch" role="tablist">
-          <button type="button" id="tab-write" class="tab-btn active" role="tab" aria-selected="true">✏ Write</button>
-          <button type="button" id="tab-preview" class="tab-btn" role="tab" aria-selected="false">👁 Preview</button>
+          <button type="button" id="tab-write" class="tab-btn active" role="tab" aria-selected="true">Write</button>
+          <button type="button" id="tab-preview" class="tab-btn" role="tab" aria-selected="false">Preview</button>
         </div>
 
         <!-- Markdown formatting touch buttons -->
@@ -174,10 +174,10 @@
           <button type="button" class="toolbar-btn" data-action="link" title="Hyperlink">Link</button>
           <button type="button" class="toolbar-btn" data-action="quote" title="Blockquote">&gt; Quote</button>
           <button type="button" class="toolbar-btn" data-action="list" title="Bullet list">• List</button>
-          <button type="button" class="toolbar-btn" data-action="task" title="Task checkbox">☑ Task</button>
+          <button type="button" class="toolbar-btn" data-action="task" title="Task checkbox">[ ] Task</button>
           <button type="button" class="toolbar-btn" data-action="strike" title="Strikethrough">~S~</button>
           <button type="button" class="toolbar-btn" data-action="hr" title="Divider">---</button>
-          <button type="button" class="toolbar-btn" data-action="tab" title="Indent 2 spaces">⇥ Indent</button>
+          <button type="button" class="toolbar-btn" data-action="tab" title="Indent 2 spaces">Indent</button>
         </div>
       </div>
 
@@ -219,10 +219,10 @@
           <span class="btn-text-short">Discard</span>
         </button>
         <button type="button" id="btn-save-draft" class="btn btn--dark" title="Commit as draft (hidden)">
-          💾 <span class="btn-text-full">Save Draft</span><span class="btn-text-short">Draft</span>
+          <span class="btn-text-full">Save Draft</span><span class="btn-text-short">Draft</span>
         </button>
         <button type="button" id="btn-publish" class="btn btn--primary" title="Publish live to blog">
-          🚀 <span class="btn-text-full">Publish Post</span><span class="btn-text-short">Publish</span>
+          <span class="btn-text-full">Publish Post</span><span class="btn-text-short">Publish</span>
         </button>
       </div>
 
@@ -233,7 +233,7 @@
   <div id="settings-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
     <div class="modal-card">
       <div class="modal-title">
-        <span id="settings-modal-title">⚙ Publisher Configuration</span>
+        <span id="settings-modal-title">Publisher Configuration</span>
         <button type="button" id="close-settings-btn" class="modal-close" aria-label="Close settings">&times;</button>
       </div>
 
@@ -265,8 +265,8 @@
             placeholder="Your private PUBLISH_SECRET passphrase"
             autocomplete="off"
           />
-          <button type="button" id="toggle-secret-btn" class="btn btn--secondary" style="padding: 0 0.8rem; font-size: 0.8rem;">
-            👁
+          <button type="button" id="toggle-secret-btn" class="btn btn--secondary" style="padding: 0 0.8rem; font-size: 0.78rem;">
+            Show
           </button>
         </div>
         <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft);">
@@ -297,7 +297,7 @@
   <div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
     <div class="modal-card" style="max-width: 440px;">
       <div class="modal-title">
-        <span id="auth-modal-title">🔒 Author Authentication</span>
+        <span id="auth-modal-title">Author Authentication</span>
         <button type="button" id="close-auth-btn" class="modal-close" aria-label="Close dialog">&times;</button>
       </div>
 
@@ -317,8 +317,8 @@
             style="font-size: 16px;"
             required
           />
-          <button type="button" id="toggle-prompt-secret-btn" class="btn btn--secondary" style="padding: 0 0.85rem; font-size: 0.85rem;" title="Show/hide password">
-            👁
+          <button type="button" id="toggle-prompt-secret-btn" class="btn btn--secondary" style="padding: 0 0.85rem; font-size: 0.78rem;" title="Show/hide password">
+            Show
           </button>
         </div>
         <div id="auth-error-msg" style="display: none; color: var(--accent); font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; margin-top: 0.4rem; padding: 0.4rem 0.6rem; border: 1px solid var(--accent); background: var(--bg);"></div>
@@ -368,7 +368,7 @@
     </div>
     <div class="footer__bottom">
       <span class="footer__copy">&copy; 2026 Smart Monke &mdash; made with bananas</span>
-      <span class="footer__monke" aria-hidden="true">🐒</span>
+      <span class="footer__monke" aria-hidden="true"><img src="assets/smartmonke-icon.png" alt="" class="footer__monke-img" /></span>
     </div>
   </footer>
 
@@ -851,6 +851,7 @@
 
       toggleSecretBtn.addEventListener('click', () => {
         cfgSecretInput.type = cfgSecretInput.type === 'password' ? 'text' : 'password';
+        toggleSecretBtn.textContent = cfgSecretInput.type === 'password' ? 'Show' : 'Hide';
       });
 
       btnSaveCfg.addEventListener('click', () => {
@@ -862,7 +863,7 @@
 
         updateConnectionIndicator();
         settingsModal.classList.remove('open');
-        showStatus('✓ Publisher configuration saved.', 'success');
+        showStatus('Publisher configuration saved.', 'success');
       });
 
       btnTestConn.addEventListener('click', async () => {
@@ -893,7 +894,7 @@
           if (res.ok && data?.valid) {
             cfgTestResult.style.color = 'var(--ink)';
             cfgTestResult.style.borderColor = 'var(--line)';
-            cfgTestResult.innerHTML = '<strong>[✓ READY]</strong> Connection & authentication verified.';
+            cfgTestResult.innerHTML = '<strong>[READY]</strong> Connection & authentication verified.';
           } else {
             cfgTestResult.style.color = 'var(--accent)';
             cfgTestResult.style.borderColor = 'var(--accent)';
@@ -912,7 +913,7 @@
         cfgSecretInput.value = '';
         updateConnectionIndicator();
         settingsModal.classList.remove('open');
-        showStatus('🔒 Publishing password cleared from this device. You will be asked for your password next time you publish.', 'info');
+        showStatus('Publishing password cleared from this device. You will be asked for your password next time you publish.', 'info');
       });
 
       // ── Auth Modal Functions ──────────────────────────────────────
@@ -943,7 +944,7 @@
 
       togglePromptSecretBtn.addEventListener('click', () => {
         promptSecretInput.type = promptSecretInput.type === 'password' ? 'text' : 'password';
-        togglePromptSecretBtn.textContent = promptSecretInput.type === 'password' ? '👁' : '🔒';
+        togglePromptSecretBtn.textContent = promptSecretInput.type === 'password' ? 'Show' : 'Hide';
       });
 
       promptSecretInput.addEventListener('keydown', (e) => {
@@ -1023,7 +1024,7 @@
         btnSaveDraft.disabled = true;
         const originalPublishText = btnPublish.textContent;
         btnPublish.textContent = 'Publishing...';
-        showStatus('<span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;">✦ Working</span><br>Creating atomic commit on GitHub (posts/' + (slugify(title) || 'slug') + '.md &amp; posts/posts.json)...', 'info', true);
+        showStatus('<span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;">Working</span><br>Creating atomic commit on GitHub (posts/' + (slugify(title) || 'slug') + '.md &amp; posts/posts.json)...', 'info', true);
 
         try {
           const endpoint = `${apiUrl.replace(/\/+$/, '')}/publish`;
@@ -1062,13 +1063,13 @@
             if (res.status === 409) {
               overwriteBox.style.display = 'flex';
               showStatus(`
-                <span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;background:var(--ink);color:var(--bg);">⚠ Collision</span><br>
+                <span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;background:var(--ink);color:var(--bg);">Collision</span><br>
                 <strong>${errorMsg}</strong><br>
                 If you wish to update this post, check <em>"Overwrite existing post"</em> below and click Publish again.
               `, 'error', true);
             } else {
               showStatus(`
-                <span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;background:var(--ink);color:var(--bg);">⚠ Error (${res.status})</span><br>
+                <span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;background:var(--ink);color:var(--bg);">Error (${res.status})</span><br>
                 ${errorMsg}
               `, 'error', true);
             }
@@ -1081,7 +1082,7 @@
 
           const postHref = `post.html?slug=${data.slug}`;
           const successMsg = `
-            <span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.75rem;transform:rotate(-1deg);">✦ ${asDraft ? 'Draft Saved' : 'Published'}</span><br>
+            <span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.75rem;transform:rotate(-1deg);">${asDraft ? 'Draft Saved' : 'Published'}</span><br>
             <strong>Post committed successfully to GitHub!</strong><br>
             File: <code>posts/${data.slug}.md</code> · Commit: <code>${(data.commitSha || '').slice(0, 7)}</code><br>
             <div style="margin-top: 1rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
@@ -1106,7 +1107,7 @@
           });
 
         } catch (err) {
-          showStatus(`⚠️ Network or publishing error: ${err.message}`, 'error');
+          showStatus(`Network or publishing error: ${err.message}`, 'error');
         } finally {
           btnPublish.disabled = false;
           btnSaveDraft.disabled = false;

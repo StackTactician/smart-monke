@@ -50,7 +50,7 @@
     </div>
     <div class="footer__bottom">
       <span class="footer__copy">&copy; 2026 Smart Monke &mdash; made with bananas</span>
-      <span class="footer__monke" aria-hidden="true">🐒</span>
+      <span class="footer__monke" aria-hidden="true"><img src="assets/smartmonke-icon.png" alt="" class="footer__monke-img" /></span>
     </div>
   </footer>
 
@@ -65,7 +65,7 @@
       if (!slug) {
         container.innerHTML = `
           <div class="state-empty">
-            <div class="state-empty__icon">🙈</div>
+            <div class="state-empty__icon"><img src="assets/smartmonke-icon.png" alt="" class="state-empty__icon-img" /></div>
             <p class="state-empty__text">No post specified. <a href="blog.html">Go back to blog</a>.</p>
           </div>`;
         return;
@@ -111,7 +111,7 @@
       } catch (err) {
         container.innerHTML = `
           <div class="state-empty">
-            <div class="state-empty__icon">🙈</div>
+            <div class="state-empty__icon"><img src="assets/smartmonke-icon.png" alt="" class="state-empty__icon-img" /></div>
             <p class="state-empty__text">Couldn't load this post.<br><small>${err.message}</small></p>
             <br><a href="blog.html" style="color:var(--accent);">← Back to blog</a>
           </div>`;

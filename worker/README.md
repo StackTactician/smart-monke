@@ -1,4 +1,4 @@
-# Smart Monke Publishing Worker 🐒
+# Smart Monke Publishing Worker
 
 A serverless Cloudflare Worker that acts as the secure publishing gateway between the `/write` interface and the GitHub repository.
 
@@ -38,7 +38,7 @@ You can deploy this worker in under 3 minutes using either the **Cloudflare Dash
      - `PUBLISH_SECRET`: Any private password/key you choose (e.g., `banana-super-secret-key-123`).
      - `GITHUB_TOKEN`: A GitHub Personal Access Token (PAT) with repository write permissions (see instructions below).
 6. Copy your worker's URL (e.g. `https://smartmonke-publisher.<your-subdomain>.workers.dev`).
-7. Open `smartmonke.me/write.html`, tap **Settings (⚙)**, and paste your Worker URL and `PUBLISH_SECRET`. You're ready to write and publish!
+7. Open `smartmonke.me/write.html`, tap **Settings**, and paste your Worker URL and `PUBLISH_SECRET`. You're ready to write and publish!
 
 ---
 

@@ -443,7 +443,17 @@ img { max-width: 100%; display: block; }
   padding: 5rem 1rem;
   color: var(--ink-soft);
 }
-.state-empty__icon { font-size: 2.4rem; margin-bottom: 0.75rem; }
+.state-empty__icon {
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: center;
+}
+.state-empty__icon-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  display: block;
+}
 .state-empty__text { font-size: 0.95rem; line-height: 1.7; }
 
 .spinner {
@@ -537,7 +547,18 @@ img { max-width: 100%; display: block; }
   color: var(--ink-soft);
 }
 
-.footer__monke { font-size: 1.2rem; line-height: 1; }
+.footer__monke {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.footer__monke-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: block;
+}
 
 /* ── Scroll Progress Bar (post pages) ───────── */
 .scroll-progress {

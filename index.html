@@ -66,7 +66,7 @@
     </div>
     <div class="footer__bottom">
       <span class="footer__copy">© 2026 Smart Monke — made with bananas</span>
-      <span class="footer__monke" aria-hidden="true">🐒</span>
+      <span class="footer__monke" aria-hidden="true"><img src="assets/smartmonke-icon.png" alt="" class="footer__monke-img" /></span>
     </div>
   </footer>
 
@@ -80,7 +80,7 @@
         if (!posts.length) {
           container.innerHTML = `
             <div class="state-empty">
-              <div class="state-empty__icon">🐒</div>
+              <div class="state-empty__icon"><img src="assets/smartmonke-icon.png" alt="" class="state-empty__icon-img" /></div>
               <p class="state-empty__text">No posts yet — check back soon!</p>
             </div>`;
           return;
@@ -104,7 +104,7 @@
           if (i === 0) {
             card.innerHTML = `
               <div class="post-card__body">
-                <span class="post-card--featured-badge">✦ Latest</span>
+                <span class="post-card--featured-badge">Latest</span>
                 <h2 class="post-card__title">${post.title}</h2>
                 <p class="post-card__excerpt">${post.excerpt}</p>
                 <div class="post-card__meta">
@@ -131,7 +131,7 @@
       } catch (err) {
         container.innerHTML = `
           <div class="state-empty">
-            <div class="state-empty__icon">🙈</div>
+            <div class="state-empty__icon"><img src="assets/smartmonke-icon.png" alt="" class="state-empty__icon-img" /></div>
             <p class="state-empty__text">Oops — couldn't load posts.<br><small>${err.message}</small></p>
           </div>`;
       }
