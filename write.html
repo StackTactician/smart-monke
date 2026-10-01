@@ -281,11 +281,66 @@
         <button type="button" id="btn-test-conn" class="btn btn--secondary" style="font-size: 0.78rem;">
           Test Connection
         </button>
-        <div style="display: flex; gap: 0.5rem;">
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" id="btn-clear-secret" class="btn btn--secondary" style="font-size: 0.78rem;">
+            Forget Password
+          </button>
           <button type="button" id="btn-save-cfg" class="btn btn--primary">
             Save Settings
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Password Authentication Modal ── -->
+  <div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+    <div class="modal-card" style="max-width: 440px;">
+      <div class="modal-title">
+        <span id="auth-modal-title">🔒 Author Authentication</span>
+        <button type="button" id="close-auth-btn" class="modal-close" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <p style="font-size: 0.88rem; color: var(--ink-soft); line-height: 1.5; margin: 0;">
+        Enter your publishing password to commit to GitHub:
+      </p>
+
+      <div class="form-group" style="margin-top: 0.35rem;">
+        <label for="prompt-secret-input" class="form-label">Publishing Password</label>
+        <div style="display: flex; gap: 0.5rem;">
+          <input
+            type="password"
+            id="prompt-secret-input"
+            class="form-input"
+            placeholder="Enter password..."
+            autocomplete="current-password"
+            style="font-size: 16px;"
+            required
+          />
+          <button type="button" id="toggle-prompt-secret-btn" class="btn btn--secondary" style="padding: 0 0.85rem; font-size: 0.85rem;" title="Show/hide password">
+            👁
+          </button>
+        </div>
+        <div id="auth-error-msg" style="display: none; color: var(--accent); font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; margin-top: 0.4rem; padding: 0.4rem 0.6rem; border: 1px solid var(--accent); background: var(--bg);"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-label" style="font-size: 0.82rem;">
+          <input type="checkbox" id="prompt-remember-secret" checked />
+          <span>Remember password on this device</span>
+        </label>
+        <span style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-soft); margin-left: 1.65rem;">
+          Allows posting straight without asking every time
+        </span>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem;">
+        <button type="button" id="btn-cancel-auth" class="btn btn--secondary" style="padding: 0.65rem 1rem;">
+          Cancel
+        </button>
+        <button type="button" id="btn-confirm-auth" class="btn btn--primary" style="padding: 0.65rem 1.25rem;">
+          Confirm &amp; Publish &rarr;
+        </button>
       </div>
     </div>
   </div>
@@ -328,14 +383,14 @@
       const STORAGE_KEY_AUTHOR  = 'smartmonke_author_name';
 
       const DEFAULT_API_URL = 'https://smartmonke-publisher.mmmoyosore09.workers.dev';
-      const DEFAULT_PUBLISH_SECRET = 'banana-monke-2026';
+      let sessionSecret = '';
 
       function getApiUrl() {
         return localStorage.getItem(STORAGE_KEY_API_URL) || DEFAULT_API_URL;
       }
 
       function getSecret() {
-        return localStorage.getItem(STORAGE_KEY_SECRET) || DEFAULT_PUBLISH_SECRET;
+        return localStorage.getItem(STORAGE_KEY_SECRET) || sessionSecret || '';
       }
 
       // ── Elements ─────────────────────────────────────────────────
@@ -379,6 +434,18 @@
       const btnSaveCfg       = document.getElementById('btn-save-cfg');
       const cfgTestResult    = document.getElementById('cfg-test-result');
       const navStatusDot     = document.getElementById('nav-status-dot');
+      const btnClearSecret   = document.getElementById('btn-clear-secret');
+
+      // Auth Prompt Modal
+      const authModal             = document.getElementById('auth-modal');
+      const closeAuthBtn          = document.getElementById('close-auth-btn');
+      const btnCancelAuth         = document.getElementById('btn-cancel-auth');
+      const btnConfirmAuth        = document.getElementById('btn-confirm-auth');
+      const promptSecretInput     = document.getElementById('prompt-secret-input');
+      const togglePromptSecretBtn = document.getElementById('toggle-prompt-secret-btn');
+      const promptRememberSecret  = document.getElementById('prompt-remember-secret');
+      const authErrorMsg          = document.getElementById('auth-error-msg');
+      let pendingPublishDraft     = false;
 
       // Cached list of existing slugs to provide instant frontend collision detection
       let existingSlugs = new Set();
@@ -839,6 +906,77 @@
         }
       });
 
+      btnClearSecret.addEventListener('click', () => {
+        localStorage.removeItem(STORAGE_KEY_SECRET);
+        sessionSecret = '';
+        cfgSecretInput.value = '';
+        updateConnectionIndicator();
+        settingsModal.classList.remove('open');
+        showStatus('🔒 Publishing password cleared from this device. You will be asked for your password next time you publish.', 'info');
+      });
+
+      // ── Auth Modal Functions ──────────────────────────────────────
+      function openAuthModal(errorText = '') {
+        if (errorText) {
+          authErrorMsg.textContent = errorText;
+          authErrorMsg.style.display = 'block';
+        } else {
+          authErrorMsg.textContent = '';
+          authErrorMsg.style.display = 'none';
+        }
+        promptSecretInput.value = '';
+        authModal.classList.add('open');
+        setTimeout(() => promptSecretInput.focus(), 60);
+      }
+
+      function closeAuthModal() {
+        authModal.classList.remove('open');
+        authErrorMsg.style.display = 'none';
+      }
+
+      closeAuthBtn.addEventListener('click', closeAuthModal);
+      btnCancelAuth.addEventListener('click', closeAuthModal);
+
+      authModal.addEventListener('click', (e) => {
+        if (e.target === authModal) closeAuthModal();
+      });
+
+      togglePromptSecretBtn.addEventListener('click', () => {
+        promptSecretInput.type = promptSecretInput.type === 'password' ? 'text' : 'password';
+        togglePromptSecretBtn.textContent = promptSecretInput.type === 'password' ? '👁' : '🔒';
+      });
+
+      promptSecretInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          btnConfirmAuth.click();
+        }
+      });
+
+      btnConfirmAuth.addEventListener('click', () => {
+        const password = promptSecretInput.value.trim();
+        if (!password) {
+          authErrorMsg.textContent = 'Please enter your password.';
+          authErrorMsg.style.display = 'block';
+          promptSecretInput.focus();
+          return;
+        }
+
+        if (promptRememberSecret.checked) {
+          localStorage.setItem(STORAGE_KEY_SECRET, password);
+        } else {
+          sessionSecret = password;
+          localStorage.removeItem(STORAGE_KEY_SECRET);
+        }
+
+        cfgSecretInput.value = password;
+        updateConnectionIndicator();
+        closeAuthModal();
+
+        // Proceed to publish with the entered password
+        publishPost(pendingPublishDraft);
+      });
+
       // ── Publishing Flow ───────────────────────────────────────────
       btnPublish.addEventListener('click', () => publishPost(false));
       btnSaveDraft.addEventListener('click', () => {
@@ -852,9 +990,10 @@
         const apiUrl = getApiUrl();
         const secret = getSecret();
 
-        if (!apiUrl || !secret) {
-          settingsModal.classList.add('open');
-          showStatus('<span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;background:var(--ink);color:var(--bg);">! Notice</span><br>Please configure your Publisher URL and Secret Key before publishing.', 'error', true);
+        if (!secret) {
+          // Require password before publishing
+          pendingPublishDraft = asDraft;
+          openAuthModal();
           return;
         }
 
@@ -910,6 +1049,16 @@
 
           if (!res.ok) {
             const errorMsg = data?.error || res.statusText || 'Publishing failed';
+            if (res.status === 401) {
+              // Authentication failed: clear stored secret and re-prompt
+              localStorage.removeItem(STORAGE_KEY_SECRET);
+              sessionSecret = '';
+              cfgSecretInput.value = '';
+              updateConnectionIndicator();
+              pendingPublishDraft = asDraft;
+              openAuthModal('Invalid publishing password. Please try again.');
+              return;
+            }
             if (res.status === 409) {
               overwriteBox.style.display = 'flex';
               showStatus(`
