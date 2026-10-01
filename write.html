@@ -226,72 +226,40 @@
       </div>
 
       <p style="font-size: 0.88rem; color: var(--ink-soft); line-height: 1.5;">
-        Configure how your posts are published to GitHub. Your credentials are saved securely in your phone's browser local storage and are <strong>never</strong> committed or exposed publicly.
+        Configure your Cloudflare Worker publishing endpoint and private secret key. These credentials are saved safely in your phone browser's local storage and are never exposed publicly.
       </p>
 
-      <!-- Publishing Mode Selector -->
       <div class="form-group">
-        <label class="form-label">Publishing Method</label>
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-          <label class="checkbox-label" style="margin-top:0;">
-            <input type="radio" name="publish-mode" value="direct" id="mode-direct" checked />
-            <span><strong>Direct GitHub API</strong> (Zero Setup)</span>
-          </label>
-          <label class="checkbox-label" style="margin-top:0;">
-            <input type="radio" name="publish-mode" value="worker" id="mode-worker" />
-            <span>Cloudflare Worker</span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Direct GitHub Settings -->
-      <div id="cfg-section-direct" class="form-group" style="padding: 1rem; background: var(--bg); border: 2px solid var(--line);">
-        <label for="cfg-gh-token" class="form-label">GitHub Personal Access Token (PAT)</label>
-        <div style="display: flex; gap: 0.5rem;">
-          <input
-            type="password"
-            id="cfg-gh-token"
-            class="form-input"
-            placeholder="gho_... or github_pat_..."
-            autocomplete="off"
-          />
-          <button type="button" id="toggle-token-btn" class="btn btn--secondary" style="padding: 0 0.8rem; font-size: 0.8rem;">
-            👁
-          </button>
-        </div>
-        <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft); margin-top: 0.25rem;">
-          Requires <code>repo</code> contents read &amp; write permission.
+        <label for="cfg-api-url" class="form-label">Publishing Worker URL</label>
+        <input
+          type="url"
+          id="cfg-api-url"
+          class="form-input"
+          placeholder="https://smartmonke-publisher.yourname.workers.dev"
+          autocomplete="off"
+        />
+        <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft);">
+          Your Cloudflare Worker URL or custom domain (e.g. <code>https://api.smartmonke.me</code>).
         </span>
       </div>
 
-      <!-- Cloudflare Worker Settings -->
-      <div id="cfg-section-worker" style="display: none; padding: 1rem; background: var(--bg); border: 2px solid var(--line); flex-direction: column; gap: 0.85rem;">
-        <div class="form-group">
-          <label for="cfg-api-url" class="form-label">Cloudflare Worker URL</label>
+      <div class="form-group">
+        <label for="cfg-secret" class="form-label">Publishing Secret (AUTH_KEY)</label>
+        <div style="display: flex; gap: 0.5rem;">
           <input
-            type="url"
-            id="cfg-api-url"
+            type="password"
+            id="cfg-secret"
             class="form-input"
-            placeholder="https://smartmonke-publisher.yourname.workers.dev"
+            placeholder="Your private PUBLISH_SECRET passphrase"
             autocomplete="off"
           />
+          <button type="button" id="toggle-secret-btn" class="btn btn--secondary" style="padding: 0 0.8rem; font-size: 0.8rem;">
+            👁
+          </button>
         </div>
-
-        <div class="form-group">
-          <label for="cfg-secret" class="form-label">Publishing Secret (PUBLISH_SECRET)</label>
-          <div style="display: flex; gap: 0.5rem;">
-            <input
-              type="password"
-              id="cfg-secret"
-              class="form-input"
-              placeholder="Your private PUBLISH_SECRET passphrase"
-              autocomplete="off"
-            />
-            <button type="button" id="toggle-secret-btn" class="btn btn--secondary" style="padding: 0 0.8rem; font-size: 0.8rem;">
-              👁
-            </button>
-          </div>
-        </div>
+        <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft);">
+          Must match the <code>PUBLISH_SECRET</code> variable configured in your Cloudflare Worker.
+        </span>
       </div>
 
       <!-- Test Connection Result -->
@@ -342,12 +310,10 @@
   <script>
     (function () {
       // ── Storage Keys ─────────────────────────────────────────────
-      const STORAGE_KEY_MODE     = 'smartmonke_publisher_mode'; // 'direct' or 'worker'
-      const STORAGE_KEY_GH_TOKEN = 'smartmonke_github_token';
-      const STORAGE_KEY_API_URL  = 'smartmonke_publisher_url';
-      const STORAGE_KEY_SECRET   = 'smartmonke_publisher_secret';
-      const STORAGE_KEY_DRAFT    = 'smartmonke_active_draft_v1';
-      const STORAGE_KEY_AUTHOR   = 'smartmonke_author_name';
+      const STORAGE_KEY_API_URL = 'smartmonke_publisher_url';
+      const STORAGE_KEY_SECRET  = 'smartmonke_publisher_secret';
+      const STORAGE_KEY_DRAFT   = 'smartmonke_active_draft_v1';
+      const STORAGE_KEY_AUTHOR  = 'smartmonke_author_name';
 
       // ── Elements ─────────────────────────────────────────────────
       const titleInput       = document.getElementById('post-title');
@@ -383,12 +349,6 @@
       const settingsModal    = document.getElementById('settings-modal');
       const openSettingsBtn  = document.getElementById('open-settings-btn');
       const closeSettingsBtn = document.getElementById('close-settings-btn');
-      const modeDirectRadio  = document.getElementById('mode-direct');
-      const modeWorkerRadio  = document.getElementById('mode-worker');
-      const cfgSectionDirect = document.getElementById('cfg-section-direct');
-      const cfgSectionWorker = document.getElementById('cfg-section-worker');
-      const cfgGhTokenInput  = document.getElementById('cfg-gh-token');
-      const toggleTokenBtn   = document.getElementById('toggle-token-btn');
       const cfgApiUrlInput   = document.getElementById('cfg-api-url');
       const cfgSecretInput   = document.getElementById('cfg-secret');
       const toggleSecretBtn  = document.getElementById('toggle-secret-btn');
@@ -427,42 +387,16 @@
       // ── Initial State Setup ───────────────────────────────────────
       function init() {
         // Load settings
-        const savedMode = localStorage.getItem(STORAGE_KEY_MODE) || 'direct';
-        const savedGhToken = localStorage.getItem(STORAGE_KEY_GH_TOKEN) || '';
         const savedUrl = localStorage.getItem(STORAGE_KEY_API_URL) || '';
         const savedSecret = localStorage.getItem(STORAGE_KEY_SECRET) || '';
         const savedAuthor = localStorage.getItem(STORAGE_KEY_AUTHOR) || 'You';
 
-        if (savedMode === 'worker') {
-          modeWorkerRadio.checked = true;
-          cfgSectionWorker.style.display = 'flex';
-          cfgSectionDirect.style.display = 'none';
-        } else {
-          modeDirectRadio.checked = true;
-          cfgSectionDirect.style.display = 'block';
-          cfgSectionWorker.style.display = 'none';
-        }
-
-        cfgGhTokenInput.value = savedGhToken;
         cfgApiUrlInput.value = savedUrl;
         cfgSecretInput.value = savedSecret;
         authorInput.value = savedAuthor;
         dateInput.value = getNowWat();
 
         updateConnectionIndicator();
-
-        // Mode switch events
-        modeDirectRadio.addEventListener('change', () => {
-          cfgSectionDirect.style.display = 'block';
-          cfgSectionWorker.style.display = 'none';
-        });
-        modeWorkerRadio.addEventListener('change', () => {
-          cfgSectionWorker.style.display = 'flex';
-          cfgSectionDirect.style.display = 'none';
-        });
-        toggleTokenBtn.addEventListener('click', () => {
-          cfgGhTokenInput.type = cfgGhTokenInput.type === 'password' ? 'text' : 'password';
-        });
 
         // Fetch existing slugs for instant collision warning
         fetch('posts/posts.json')
@@ -484,17 +418,11 @@
       }
 
       function updateConnectionIndicator() {
-        const mode = localStorage.getItem(STORAGE_KEY_MODE) || 'direct';
-        let ready = false;
-        if (mode === 'direct') {
-          ready = Boolean(localStorage.getItem(STORAGE_KEY_GH_TOKEN));
-        } else {
-          ready = Boolean(localStorage.getItem(STORAGE_KEY_API_URL)) && Boolean(localStorage.getItem(STORAGE_KEY_SECRET));
-        }
-
-        if (ready) {
+        const hasUrl = Boolean(localStorage.getItem(STORAGE_KEY_API_URL));
+        const hasSecret = Boolean(localStorage.getItem(STORAGE_KEY_SECRET));
+        if (hasUrl && hasSecret) {
           navStatusDot.classList.add('ready');
-          navStatusDot.title = 'Publisher configured (' + (mode === 'direct' ? 'Direct GitHub' : 'Worker') + ')';
+          navStatusDot.title = 'Publisher configured';
         } else {
           navStatusDot.classList.remove('ready');
           navStatusDot.title = 'Publisher configuration required';
@@ -788,223 +716,57 @@
       });
 
       btnSaveCfg.addEventListener('click', () => {
-        const mode = modeWorkerRadio.checked ? 'worker' : 'direct';
-        const ghToken = cfgGhTokenInput.value.trim();
         const url = cfgApiUrlInput.value.trim().replace(/\/+$/, '');
         const secret = cfgSecretInput.value.trim();
 
-        localStorage.setItem(STORAGE_KEY_MODE, mode);
-        localStorage.setItem(STORAGE_KEY_GH_TOKEN, ghToken);
         localStorage.setItem(STORAGE_KEY_API_URL, url);
         localStorage.setItem(STORAGE_KEY_SECRET, secret);
 
         updateConnectionIndicator();
         settingsModal.classList.remove('open');
-        showStatus('✓ Configuration saved.', 'success');
+        showStatus('✓ Publisher configuration saved.', 'success');
       });
 
       btnTestConn.addEventListener('click', async () => {
-        const mode = modeWorkerRadio.checked ? 'worker' : 'direct';
+        const url = cfgApiUrlInput.value.trim().replace(/\/+$/, '');
+        const secret = cfgSecretInput.value.trim();
+
+        if (!url) {
+          cfgTestResult.style.display = 'block';
+          cfgTestResult.style.color = '#991b1b';
+          cfgTestResult.textContent = 'Please enter a Worker URL first.';
+          return;
+        }
+
         cfgTestResult.style.display = 'block';
         cfgTestResult.style.color = 'var(--ink)';
         cfgTestResult.textContent = 'Testing connection...';
 
-        if (mode === 'direct') {
-          const token = cfgGhTokenInput.value.trim();
-          if (!token) {
-            cfgTestResult.style.color = 'var(--accent)';
-            cfgTestResult.style.borderColor = 'var(--accent)';
-            cfgTestResult.textContent = 'Please enter your GitHub token.';
-            return;
-          }
-          try {
-            const res = await fetch('https://api.github.com/user', {
-              headers: {
-                'Accept': 'application/vnd.github+json',
-                'Authorization': `Bearer ${token}`
-              }
-            });
-            const data = await res.json().catch(() => null);
-            if (res.ok && data?.login) {
-              cfgTestResult.style.color = 'var(--ink)';
-              cfgTestResult.style.borderColor = 'var(--line)';
-              cfgTestResult.innerHTML = `<strong>[✓ READY]</strong> Authenticated as @${data.login}. Direct publishing ready!`;
-            } else {
-              cfgTestResult.style.color = 'var(--accent)';
-              cfgTestResult.style.borderColor = 'var(--accent)';
-              cfgTestResult.innerHTML = `<strong>[! FAILED]</strong> GitHub rejected token: ${data?.message || res.statusText}`;
-            }
-          } catch (err) {
-            cfgTestResult.style.color = 'var(--accent)';
-            cfgTestResult.style.borderColor = 'var(--accent)';
-            cfgTestResult.innerHTML = `<strong>[! ERROR]</strong> Network error: ${err.message}`;
-          }
-        } else {
-          const url = cfgApiUrlInput.value.trim().replace(/\/+$/, '');
-          const secret = cfgSecretInput.value.trim();
-
-          if (!url) {
-            cfgTestResult.style.color = 'var(--accent)';
-            cfgTestResult.style.borderColor = 'var(--accent)';
-            cfgTestResult.textContent = 'Please enter a Worker URL first.';
-            return;
-          }
-
-          try {
-            const res = await fetch(`${url}/verify`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${secret}`
-              }
-            });
-            const data = await res.json().catch(() => null);
-
-            if (res.ok && data?.valid) {
-              cfgTestResult.style.color = 'var(--ink)';
-              cfgTestResult.style.borderColor = 'var(--line)';
-              cfgTestResult.innerHTML = '<strong>[✓ READY]</strong> Worker connection & authentication verified.';
-            } else {
-              cfgTestResult.style.color = 'var(--accent)';
-              cfgTestResult.style.borderColor = 'var(--accent)';
-              cfgTestResult.innerHTML = `<strong>[! FAILED]</strong> ${data?.error || res.statusText || 'Could not verify'}`;
-            }
-          } catch (err) {
-            cfgTestResult.style.color = 'var(--accent)';
-            cfgTestResult.style.borderColor = 'var(--accent)';
-            cfgTestResult.innerHTML = `<strong>[! ERROR]</strong> Network failure: ${err.message}`;
-          }
-        }
-      });
-
-      // ── Utility: Generate Excerpt ─────────────────────────────────
-      function generateExcerpt(text) {
-        const paragraphs = text.split(/\r?\n\r?\n+/);
-        for (let p of paragraphs) {
-          p = p.trim();
-          if (p.startsWith('```') || p.startsWith('>')) continue;
-          p = p.replace(/^#+\s+[^\n]*/g, '').trim();
-          if (!p) continue;
-          const clean = p
-            .replace(/!\[.*?\]\(.*?\)/g, '')
-            .replace(/\[(.*?)\]\(.*?\)/g, '$1')
-            .replace(/[`*_~]/g, '')
-            .replace(/\s+/g, ' ')
-            .trim();
-          if (clean.length > 0) {
-            if (clean.length <= 160) return clean;
-            return clean.slice(0, 157).trim() + '...';
-          }
-        }
-        return '';
-      }
-
-      // ── Direct GitHub Atomic Commit ───────────────────────────────
-      async function publishDirectGitHub({ title, content, tag, publishedDate, author, excerpt, draft, overwrite, token }) {
-        const owner = 'StackTactician';
-        const repo = 'smart-monke';
-        const branch = 'main';
-
-        async function gh(endpoint, options = {}) {
-          const res = await fetch(`https://api.github.com/repos/${owner}/${repo}${endpoint}`, {
-            ...options,
+        try {
+          const res = await fetch(`${url}/verify`, {
+            method: 'POST',
             headers: {
-              'Accept': 'application/vnd.github+json',
-              'Authorization': `Bearer ${token.trim()}`,
-              'X-GitHub-Api-Version': '2022-11-28',
-              ...(options.headers || {})
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${secret}`
             }
           });
           const data = await res.json().catch(() => null);
-          if (!res.ok) {
-            const err = new Error(data?.message || res.statusText || 'GitHub API error');
-            err.status = res.status;
-            err.data = data;
-            throw err;
+
+          if (res.ok && data?.valid) {
+            cfgTestResult.style.color = 'var(--ink)';
+            cfgTestResult.style.borderColor = 'var(--line)';
+            cfgTestResult.innerHTML = '<strong>[✓ READY]</strong> Connection & authentication verified.';
+          } else {
+            cfgTestResult.style.color = 'var(--accent)';
+            cfgTestResult.style.borderColor = 'var(--accent)';
+            cfgTestResult.innerHTML = `<strong>[! FAILED]</strong> ${data?.error || res.statusText || 'Could not verify'}`;
           }
-          return data;
+        } catch (err) {
+          cfgTestResult.style.color = 'var(--accent)';
+          cfgTestResult.style.borderColor = 'var(--accent)';
+          cfgTestResult.innerHTML = `<strong>[! ERROR]</strong> Network failure: ${err.message}`;
         }
-
-        // 1. Get HEAD commit SHA
-        const refData = await gh(`/git/ref/heads/${branch}`);
-        const headSha = refData.object.sha;
-
-        // 2. Get base tree SHA
-        const commitData = await gh(`/git/commits/${headSha}`);
-        const baseTreeSha = commitData.tree.sha;
-
-        // 3. Fetch and update posts/posts.json
-        const postsJsonFile = await gh(`/contents/posts/posts.json?ref=${branch}`);
-        const binary = atob(postsJsonFile.content.replace(/\s/g, ''));
-        const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-        const postsJsonText = new TextDecoder().decode(bytes);
-        let postsList = JSON.parse(postsJsonText);
-        if (!Array.isArray(postsList)) postsList = [];
-
-        const slug = slugify(title);
-        if (!overwrite && postsList.includes(slug)) {
-          const err = new Error(`Slug "${slug}" already exists in posts.json.`);
-          err.status = 409;
-          throw err;
-        }
-
-        if (!postsList.includes(slug)) {
-          postsList = [slug, ...postsList];
-        }
-        const updatedPostsJson = JSON.stringify(postsList, null, 2) + '\n';
-
-        // 4. Format Markdown with front matter
-        const cleanTitle = title.replace(/"/g, '\\"');
-        const cleanExcerpt = (excerpt || generateExcerpt(content)).replace(/"/g, '\\"');
-        const fullMarkdown = `---
-title: "${cleanTitle}"
-publishedDate: ${publishedDate}
-tag: ${tag}
-author: ${author}
-excerpt: "${cleanExcerpt}"
-draft: ${draft}
----
-
-${content.trim()}
-`;
-
-        // 5. Create Git Tree with both files
-        const treeData = await gh('/git/trees', {
-          method: 'POST',
-          body: JSON.stringify({
-            base_tree: baseTreeSha,
-            tree: [
-              { path: `posts/${slug}.md`, mode: '100644', type: 'blob', content: fullMarkdown },
-              { path: 'posts/posts.json', mode: '100644', type: 'blob', content: updatedPostsJson }
-            ]
-          })
-        });
-
-        // 6. Create Commit
-        const actionLabel = overwrite ? 'Update' : 'Publish';
-        const newCommit = await gh('/git/commits', {
-          method: 'POST',
-          body: JSON.stringify({
-            message: `${actionLabel} post: ${title}${draft ? ' (draft)' : ''}`,
-            tree: treeData.sha,
-            parents: [headSha]
-          })
-        });
-
-        // 7. Update Ref atomically
-        await gh(`/git/refs/heads/${branch}`, {
-          method: 'PATCH',
-          body: JSON.stringify({ sha: newCommit.sha, force: false })
-        });
-
-        return {
-          slug,
-          title,
-          commitSha: newCommit.sha,
-          postUrl: `https://smartmonke.me/post.html?slug=${slug}`,
-          commitUrl: `https://github.com/${owner}/${repo}/commit/${newCommit.sha}`
-        };
-      }
+      });
 
       // ── Publishing Flow ───────────────────────────────────────────
       btnPublish.addEventListener('click', () => publishPost(false));
@@ -1016,20 +778,12 @@ ${content.trim()}
       async function publishPost(asDraft = false) {
         clearStatus();
 
-        const mode = localStorage.getItem(STORAGE_KEY_MODE) || 'direct';
-        const ghToken = localStorage.getItem(STORAGE_KEY_GH_TOKEN);
         const apiUrl = localStorage.getItem(STORAGE_KEY_API_URL);
         const secret = localStorage.getItem(STORAGE_KEY_SECRET);
 
-        if (mode === 'direct' && !ghToken) {
+        if (!apiUrl || !secret) {
           settingsModal.classList.add('open');
-          showStatus('<span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;background:var(--ink);color:var(--bg);">! Setup Required</span><br>Please enter your GitHub Personal Access Token in Settings.', 'error', true);
-          return;
-        }
-
-        if (mode === 'worker' && (!apiUrl || !secret)) {
-          settingsModal.classList.add('open');
-          showStatus('<span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;background:var(--ink);color:var(--bg);">! Setup Required</span><br>Please configure your Publisher URL and Secret Key in Settings.', 'error', true);
+          showStatus('<span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;background:var(--ink);color:var(--bg);">! Notice</span><br>Please configure your Publisher URL and Secret Key before publishing.', 'error', true);
           return;
         }
 
@@ -1062,9 +816,14 @@ ${content.trim()}
         showStatus('<span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;">✦ Working</span><br>Creating atomic commit on GitHub (posts/' + (slugify(title) || 'slug') + '.md &amp; posts/posts.json)...', 'info', true);
 
         try {
-          let data;
-          if (mode === 'direct') {
-            data = await publishDirectGitHub({
+          const endpoint = `${apiUrl.replace(/\/+$/, '')}/publish`;
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${secret}`
+            },
+            body: JSON.stringify({
               title,
               content,
               tag,
@@ -1072,35 +831,28 @@ ${content.trim()}
               author,
               excerpt,
               draft: asDraft,
-              overwrite,
-              token: ghToken
-            });
-          } else {
-            const endpoint = `${apiUrl.replace(/\/+$/, '')}/publish`;
-            const res = await fetch(endpoint, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${secret}`
-              },
-              body: JSON.stringify({
-                title,
-                content,
-                tag,
-                publishedDate,
-                author,
-                excerpt,
-                draft: asDraft,
-                overwrite
-              })
-            });
+              overwrite
+            })
+          });
 
-            data = await res.json().catch(() => null);
-            if (!res.ok) {
-              const err = new Error(data?.error || res.statusText || 'Publishing failed');
-              err.status = res.status;
-              throw err;
+          const data = await res.json().catch(() => null);
+
+          if (!res.ok) {
+            const errorMsg = data?.error || res.statusText || 'Publishing failed';
+            if (res.status === 409) {
+              overwriteBox.style.display = 'flex';
+              showStatus(`
+                <span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;background:var(--ink);color:var(--bg);">⚠ Collision</span><br>
+                <strong>${errorMsg}</strong><br>
+                If you wish to update this post, check <em>"Overwrite existing post"</em> below and click Publish again.
+              `, 'error', true);
+            } else {
+              showStatus(`
+                <span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;background:var(--ink);color:var(--bg);">⚠ Error (${res.status})</span><br>
+                ${errorMsg}
+              `, 'error', true);
             }
+            return;
           }
 
           // SUCCESS!
@@ -1134,19 +886,7 @@ ${content.trim()}
           });
 
         } catch (err) {
-          if (err.status === 409) {
-            overwriteBox.style.display = 'flex';
-            showStatus(`
-              <span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;background:var(--ink);color:var(--bg);">⚠ Collision</span><br>
-              <strong>${err.message}</strong><br>
-              If you wish to update this post, check <em>"Overwrite existing post"</em> below and click Publish again.
-            `, 'error', true);
-          } else {
-            showStatus(`
-              <span class="post-card__tag" style="position:static;display:inline-block;margin-bottom:0.5rem;transform:none;background:var(--ink);color:var(--bg);">⚠ Error</span><br>
-              ${err.message}
-            `, 'error', true);
-          }
+          showStatus(`⚠️ Network or publishing error: ${err.message}`, 'error');
         } finally {
           btnPublish.disabled = false;
           btnSaveDraft.disabled = false;
