@@ -606,3 +606,487 @@ img { max-width: 100%; display: block; }
   }
   .back-to-top { bottom: 1.25rem; right: 1.25rem; }
 }
+
+/* =============================================
+   Author Desk / Editor Styles (write.html)
+   Strictly adheres to Smart Monke:
+   One typeface, one accent, hard edges, no shadows.
+   ============================================= */
+
+.editor-wrap {
+  background: var(--card);
+  border: 2px solid var(--line);
+  padding: 2.25rem 2rem 2rem;
+  margin: 2.5rem auto 3.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+}
+
+.editor-badge {
+  position: absolute;
+  top: -13px;
+  left: 1.5rem;
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: 2px solid var(--line);
+  padding: 0.2rem 0.6rem;
+  transform: rotate(-2deg);
+  width: fit-content;
+}
+
+.editor-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 1rem;
+  margin-top: 0.25rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.editor-heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.form-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.1s, background-color 0.1s;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--accent);
+  background-color: var(--card);
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.form-input--title {
+  font-size: clamp(1.3rem, 3.8vw, 1.8rem);
+  font-weight: 700;
+  padding: 0.85rem 1.1rem;
+  background: var(--card);
+  font-family: var(--font-display);
+}
+
+.slug-preview {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  word-break: break-all;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+.slug-preview code {
+  background: var(--bg);
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--line-soft);
+  color: var(--ink);
+}
+
+.slug-preview strong {
+  color: var(--ink);
+}
+
+.editor-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1.25rem;
+  padding: 1.25rem;
+  background: var(--bg);
+  border: 2px solid var(--line);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--ink);
+  cursor: pointer;
+  user-select: none;
+  margin-top: 0.35rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  border-radius: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* Toolbar & Editor Controls */
+.editor-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.editor-toolbar {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.2rem;
+}
+
+.toolbar-btn {
+  background: var(--card);
+  border: 2px solid var(--line);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.65rem;
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: 0;
+  transition: background 0.1s, color 0.1s;
+}
+
+.toolbar-btn:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.editor-tab-switch {
+  display: flex;
+  border: 2px solid var(--line);
+  background: var(--bg);
+}
+
+.tab-btn {
+  border: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.45rem 1rem;
+  cursor: pointer;
+  color: var(--ink);
+  border-radius: 0;
+  transition: background 0.1s, color 0.1s;
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.editor-textarea {
+  min-height: 440px;
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  resize: vertical;
+  tab-size: 2;
+  background: var(--card);
+}
+
+.editor-preview {
+  min-height: 440px;
+  padding: 2rem 2.25rem;
+  background: var(--card);
+  border: 2px solid var(--line);
+  display: none;
+  overflow-y: auto;
+}
+
+.editor-preview.active {
+  display: block;
+}
+
+.editor-footer-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-top: 1px dashed var(--line-soft);
+  padding-top: 0.75rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--line);
+  border-radius: 0;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  text-decoration: none;
+  user-select: none;
+}
+
+.btn:active {
+  transform: translate(1px, 1px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn--primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.btn--primary:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.btn--secondary {
+  background: var(--card);
+  color: var(--ink);
+}
+
+.btn--secondary:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.btn--dark {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.btn--dark:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ink-soft);
+  padding: 0.35rem 0.6rem;
+}
+
+.btn--ghost:hover {
+  color: var(--accent);
+  border-color: var(--line);
+}
+
+.btn-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  border-top: 2px solid var(--line);
+  padding-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Status Notifications — Stamped card style */
+.status-banner {
+  border: 2px solid var(--line);
+  background: var(--card);
+  padding: 1.25rem 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  display: none;
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.status-banner--success {
+  border: 2px solid var(--line);
+  display: block;
+}
+
+.status-banner--error {
+  border: 2px solid var(--accent);
+  background: var(--card);
+  display: block;
+}
+
+.status-banner--info {
+  border: 2px solid var(--line);
+  background: var(--bg);
+  display: block;
+}
+
+.status-banner a {
+  color: var(--accent);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Modal Drawer for Settings — Zero blur, pure brutalist */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(17, 17, 17, 0.7);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.modal-overlay.open {
+  display: flex;
+}
+
+.modal-card {
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: 0;
+  max-width: 560px;
+  width: 100%;
+  padding: 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  position: relative;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  border-bottom: 2px solid var(--line);
+  padding-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-close {
+  background: none;
+  border: 2px solid transparent;
+  font-size: 1.4rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2rem 0.5rem;
+  color: var(--ink);
+  transition: all 0.1s;
+}
+
+.modal-close:hover {
+  border-color: var(--line);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* Square brutalist indicator */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background: transparent;
+  border: 1.5px solid var(--line);
+}
+
+.status-dot.ready {
+  background: var(--accent);
+  border-color: var(--line);
+}
+
+@media (max-width: 640px) {
+  .editor-wrap {
+    padding: 1.5rem 1.1rem 1.25rem;
+    margin: 1.25rem auto 2.5rem;
+  }
+  .form-input--title {
+    font-size: 1.2rem;
+    padding: 0.7rem 0.85rem;
+  }
+  .editor-meta-grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+  .editor-controls-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .editor-tab-switch {
+    width: 100%;
+  }
+  .editor-tab-switch .tab-btn {
+    flex: 1;
+    text-align: center;
+  }
+  .btn-actions-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .btn-actions-row .btn {
+    width: 100%;
+  }
+  .modal-card {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
