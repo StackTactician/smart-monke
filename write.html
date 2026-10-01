@@ -24,7 +24,7 @@
         <li>
           <button id="open-settings-btn" class="toolbar-btn" style="display:flex;align-items:center;gap:0.4rem;padding:0.4rem 0.75rem;" title="Configure publisher endpoint & key">
             <span id="nav-status-dot" class="status-dot" aria-hidden="true"></span>
-            ⚙ Settings
+            ⚙ <span class="nav-settings-label">Settings</span>
           </button>
         </li>
       </ul>
@@ -71,102 +71,113 @@
         </div>
       </div>
 
-      <!-- Metadata Grid -->
-      <div class="editor-meta-grid">
+      <!-- Primary Metadata: Tag & Draft -->
+      <div class="editor-primary-meta">
         <!-- Tag Selector -->
-        <div class="form-group">
+        <div class="form-group form-group--tag">
           <label for="post-tag-select" class="form-label">Tag</label>
-          <select id="post-tag-select" class="form-select">
-            <option value="ramble" selected>ramble</option>
-            <option value="technical">technical</option>
-            <option value="experiment">experiment</option>
-            <option value="devlog">devlog</option>
-            <option value="project">project</option>
-            <option value="__custom__">+ Custom tag...</option>
-          </select>
-          <input
-            type="text"
-            id="post-tag-custom"
-            class="form-input"
-            placeholder="Enter custom tag"
-            style="display: none; margin-top: 0.35rem;"
-          />
-        </div>
-
-        <!-- Date Input -->
-        <div class="form-group">
-          <div class="form-label">
-            <span>Publish Date (WAT)</span>
-            <button type="button" id="btn-now" class="btn--ghost" style="padding: 0; font-size: 0.7rem; cursor: pointer;">Reset to Now</button>
+          <div class="tag-select-wrap">
+            <select id="post-tag-select" class="form-select">
+              <option value="ramble" selected>ramble</option>
+              <option value="technical">technical</option>
+              <option value="experiment">experiment</option>
+              <option value="devlog">devlog</option>
+              <option value="project">project</option>
+              <option value="__custom__">+ Custom tag...</option>
+            </select>
+            <input
+              type="text"
+              id="post-tag-custom"
+              class="form-input"
+              placeholder="Enter custom tag"
+              style="display: none; margin-top: 0.35rem;"
+            />
           </div>
-          <input
-            type="text"
-            id="post-date"
-            class="form-input"
-            placeholder="YYYY-MM-DD HH:MM"
-          />
-        </div>
-
-        <!-- Author Input -->
-        <div class="form-group">
-          <label for="post-author" class="form-label">Author</label>
-          <input
-            type="text"
-            id="post-author"
-            class="form-input"
-            value="You"
-            placeholder="Your name"
-          />
         </div>
 
         <!-- Draft Checkbox -->
-        <div class="form-group" style="justify-content: flex-end;">
+        <div class="form-group form-group--draft">
           <label class="checkbox-label" title="Draft posts are committed but hidden from public listings">
             <input type="checkbox" id="post-draft" />
             <span>Save as Draft</span>
           </label>
-          <span style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-soft); margin-top: 0.2rem;">
+          <span class="draft-hint">
             Hidden from index until published
           </span>
         </div>
       </div>
 
-      <!-- Optional Excerpt -->
-      <details style="font-family: var(--font-mono); font-size: 0.8rem; margin: -0.25rem 0 0.25rem;">
-        <summary style="cursor: pointer; color: var(--ink-soft); padding: 0.3rem 0; user-select: none;">
-          ▸ Optional: Custom Excerpt (leave blank to auto-generate from paragraph 1)
+      <!-- Advanced Metadata Options (Collapsible to keep mobile uncluttered) -->
+      <details class="editor-meta-details">
+        <summary class="editor-meta-summary">
+          <span>▸ Advanced options (Date, Author, Excerpt)</span>
         </summary>
-        <div style="margin-top: 0.5rem;">
-          <textarea
-            id="post-excerpt"
-            class="form-input"
-            rows="2"
-            placeholder="Short 1-2 sentence teaser for this post..."
-            style="resize: vertical; font-family: var(--font-display);"
-          ></textarea>
+        <div class="editor-meta-drawer">
+          <div class="editor-meta-grid">
+            <!-- Date Input -->
+            <div class="form-group">
+              <div class="form-label">
+                <span>Publish Date (WAT)</span>
+                <button type="button" id="btn-now" class="btn--ghost" style="padding: 0; font-size: 0.7rem; cursor: pointer;">Reset to Now</button>
+              </div>
+              <input
+                type="text"
+                id="post-date"
+                class="form-input"
+                placeholder="YYYY-MM-DD HH:MM"
+              />
+            </div>
+
+            <!-- Author Input -->
+            <div class="form-group">
+              <label for="post-author" class="form-label">Author</label>
+              <input
+                type="text"
+                id="post-author"
+                class="form-input"
+                value="You"
+                placeholder="Your name"
+              />
+            </div>
+          </div>
+
+          <!-- Custom Excerpt -->
+          <div class="form-group" style="margin-top: 0.75rem;">
+            <label for="post-excerpt" class="form-label">Custom Excerpt (optional)</label>
+            <textarea
+              id="post-excerpt"
+              class="form-input"
+              rows="2"
+              placeholder="Short 1-2 sentence teaser (leave blank to auto-generate from paragraph 1)..."
+              style="resize: vertical; font-family: var(--font-display);"
+            ></textarea>
+          </div>
         </div>
       </details>
 
-      <!-- Formatting Toolbar & Tab Switcher -->
+      <!-- Formatting Toolbar & Tab Switcher (Sticky on Mobile) -->
       <div class="editor-controls-row">
+        <!-- View Switcher -->
+        <div class="editor-tab-switch" role="tablist">
+          <button type="button" id="tab-write" class="tab-btn active" role="tab" aria-selected="true">✏ Write</button>
+          <button type="button" id="tab-preview" class="tab-btn" role="tab" aria-selected="false">👁 Preview</button>
+        </div>
+
         <!-- Markdown formatting touch buttons -->
         <div class="editor-toolbar" role="toolbar" aria-label="Markdown formatting tools">
           <button type="button" class="toolbar-btn" data-action="h2" title="Heading 2">H2</button>
           <button type="button" class="toolbar-btn" data-action="h3" title="Heading 3">H3</button>
           <button type="button" class="toolbar-btn" data-action="bold" title="Bold"><strong>B</strong></button>
           <button type="button" class="toolbar-btn" data-action="italic" title="Italic"><em>I</em></button>
-          <button type="button" class="toolbar-btn" data-action="code" title="Inline code">`code`</button>
+          <button type="button" class="toolbar-btn" data-action="code" title="Inline code">`c`</button>
           <button type="button" class="toolbar-btn" data-action="block" title="Code block">```</button>
           <button type="button" class="toolbar-btn" data-action="link" title="Hyperlink">Link</button>
           <button type="button" class="toolbar-btn" data-action="quote" title="Blockquote">&gt; Quote</button>
           <button type="button" class="toolbar-btn" data-action="list" title="Bullet list">• List</button>
+          <button type="button" class="toolbar-btn" data-action="task" title="Task checkbox">☑ Task</button>
+          <button type="button" class="toolbar-btn" data-action="strike" title="Strikethrough">~S~</button>
           <button type="button" class="toolbar-btn" data-action="hr" title="Divider">---</button>
-        </div>
-
-        <!-- View Switcher -->
-        <div class="editor-tab-switch" role="tablist">
-          <button type="button" id="tab-write" class="tab-btn active" role="tab" aria-selected="true">Write</button>
-          <button type="button" id="tab-preview" class="tab-btn" role="tab" aria-selected="false">Preview</button>
+          <button type="button" class="toolbar-btn" data-action="tab" title="Indent 2 spaces">⇥ Indent</button>
         </div>
       </div>
 
@@ -201,16 +212,17 @@
         </div>
       </div>
 
-      <!-- Action Buttons Row -->
+      <!-- Action Buttons Row (Sticky on Mobile) -->
       <div class="btn-actions-row">
         <button type="button" id="btn-discard" class="btn btn--secondary" title="Clear current editor">
-          Discard Draft
+          <span class="btn-text-full">Discard Draft</span>
+          <span class="btn-text-short">Discard</span>
         </button>
         <button type="button" id="btn-save-draft" class="btn btn--dark" title="Commit as draft (hidden)">
-          💾 Save Draft
+          💾 <span class="btn-text-full">Save Draft</span><span class="btn-text-short">Draft</span>
         </button>
         <button type="button" id="btn-publish" class="btn btn--primary" title="Publish live to blog">
-          🚀 Publish Post
+          🚀 <span class="btn-text-full">Publish Post</span><span class="btn-text-short">Publish</span>
         </button>
       </div>
 
@@ -528,7 +540,12 @@
 
       // ── Markdown Formatting Toolbar ───────────────────────────────
       document.querySelectorAll('.toolbar-btn[data-action]').forEach(btn => {
-        btn.addEventListener('click', () => {
+        // Prevent losing focus and selection when tapping toolbar on touch screens
+        btn.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+        });
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
           const action = btn.getAttribute('data-action');
           insertFormatting(action);
         });
@@ -540,53 +557,88 @@
         const end = textarea.selectionEnd;
         const selText = textarea.value.substring(start, end);
         let replacement = '';
-        let cursorOffset = 0;
 
         switch (action) {
           case 'h2':
             replacement = `\n## ${selText || 'Heading 2'}\n`;
-            cursorOffset = replacement.length;
+            textarea.setRangeText(replacement, start, end, 'end');
             break;
           case 'h3':
             replacement = `\n### ${selText || 'Heading 3'}\n`;
-            cursorOffset = replacement.length;
+            textarea.setRangeText(replacement, start, end, 'end');
             break;
           case 'bold':
-            replacement = `**${selText || 'bold text'}**`;
-            cursorOffset = selText ? replacement.length : 2;
+            if (selText) {
+              replacement = `**${selText}**`;
+              textarea.setRangeText(replacement, start, end, 'end');
+            } else {
+              textarea.setRangeText('****', start, end, 'select');
+              textarea.setSelectionRange(start + 2, start + 2);
+            }
             break;
           case 'italic':
-            replacement = `*${selText || 'italic text'}*`;
-            cursorOffset = selText ? replacement.length : 1;
+            if (selText) {
+              replacement = `*${selText}*`;
+              textarea.setRangeText(replacement, start, end, 'end');
+            } else {
+              textarea.setRangeText('**', start, end, 'select');
+              textarea.setSelectionRange(start + 1, start + 1);
+            }
             break;
           case 'code':
-            replacement = `\`${selText || 'code'}\``;
-            cursorOffset = selText ? replacement.length : 1;
+            if (selText) {
+              replacement = `\`${selText}\``;
+              textarea.setRangeText(replacement, start, end, 'end');
+            } else {
+              textarea.setRangeText('``', start, end, 'select');
+              textarea.setSelectionRange(start + 1, start + 1);
+            }
+            break;
+          case 'strike':
+            if (selText) {
+              replacement = `~~${selText}~~`;
+              textarea.setRangeText(replacement, start, end, 'end');
+            } else {
+              textarea.setRangeText('~~~~', start, end, 'select');
+              textarea.setSelectionRange(start + 2, start + 2);
+            }
             break;
           case 'block':
             replacement = `\n\`\`\`rust\n${selText || '// code here'}\n\`\`\`\n`;
-            cursorOffset = replacement.length;
+            textarea.setRangeText(replacement, start, end, 'end');
             break;
           case 'link':
-            replacement = `[${selText || 'link text'}](https://example.com)`;
-            cursorOffset = replacement.length;
+            if (selText) {
+              replacement = `[${selText}](https://example.com)`;
+              textarea.setRangeText(replacement, start, end, 'end');
+            } else {
+              textarea.setRangeText('[link text](https://example.com)', start, end, 'select');
+              textarea.setSelectionRange(start + 1, start + 10);
+            }
             break;
           case 'quote':
             replacement = `\n> ${selText || 'Quote here'}\n`;
-            cursorOffset = replacement.length;
+            textarea.setRangeText(replacement, start, end, 'end');
             break;
           case 'list':
             replacement = `\n- ${selText || 'List item'}\n`;
-            cursorOffset = replacement.length;
+            textarea.setRangeText(replacement, start, end, 'end');
+            break;
+          case 'task':
+            replacement = `\n- [ ] ${selText || 'Task'}\n`;
+            textarea.setRangeText(replacement, start, end, 'end');
             break;
           case 'hr':
             replacement = `\n\n---\n\n`;
-            cursorOffset = replacement.length;
+            textarea.setRangeText(replacement, start, end, 'end');
+            break;
+          case 'tab':
+            replacement = `  ${selText}`;
+            textarea.setRangeText(replacement, start, end, 'end');
             break;
         }
 
         textarea.focus();
-        textarea.setRangeText(replacement, start, end, 'end');
         updateWordCount();
         scheduleAutosave();
       }
@@ -653,6 +705,14 @@
         const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         saveIndicatorEl.textContent = `Draft saved ${timeStr}`;
       }
+
+      // Save draft immediately when user switches tabs or backgrounds the browser on mobile
+      window.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+          saveDraft();
+        }
+      });
+      window.addEventListener('pagehide', saveDraft);
 
       function loadDraft() {
         const saved = localStorage.getItem(STORAGE_KEY_DRAFT);

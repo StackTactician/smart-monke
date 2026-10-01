@@ -732,6 +732,66 @@ img { max-width: 100%; display: block; }
   color: var(--ink);
 }
 
+.editor-primary-meta {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-end;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  padding: 1rem 1.25rem;
+}
+
+.form-group--tag {
+  flex: 1;
+}
+
+.form-group--draft {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  padding-bottom: 0.2rem;
+}
+
+.draft-hint {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--ink-soft);
+  margin-top: 0.2rem;
+}
+
+.editor-meta-details {
+  border: 2px solid var(--line-soft);
+  background: var(--bg);
+  transition: border-color 0.1s;
+}
+
+.editor-meta-details[open] {
+  border-color: var(--line);
+}
+
+.editor-meta-summary {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  padding: 0.55rem 0.85rem;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.editor-meta-summary:hover {
+  color: var(--ink);
+  background: var(--card);
+}
+
+.editor-meta-drawer {
+  padding: 1rem;
+  border-top: 1px dashed var(--line-soft);
+}
+
 .editor-meta-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
@@ -1056,20 +1116,76 @@ img { max-width: 100%; display: block; }
 
 @media (max-width: 640px) {
   .editor-wrap {
-    padding: 1.5rem 1.1rem 1.25rem;
-    margin: 1.25rem auto 2.5rem;
+    padding: 1.25rem 0.95rem 1rem;
+    margin: 1rem auto 2.5rem;
+  }
+  .editor-badge {
+    left: 1rem;
+    font-size: 0.62rem;
+  }
+  .editor-header-bar {
+    padding-bottom: 0.75rem;
+  }
+  .editor-heading {
+    font-size: 1.25rem;
   }
   .form-input--title {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     padding: 0.7rem 0.85rem;
+  }
+  /* Crucial iOS WebKit fix: prevents disruptive viewport auto-zoom on input focus */
+  .form-input,
+  .form-select,
+  .form-textarea {
+    font-size: 16px !important;
+  }
+  .editor-primary-meta {
+    flex-direction: row;
+    gap: 0.75rem;
+    padding: 0.75rem 0.85rem;
+    align-items: center;
   }
   .editor-meta-grid {
     grid-template-columns: 1fr;
-    padding: 1rem;
+    gap: 0.85rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+  .editor-meta-drawer {
+    padding: 0.85rem;
   }
   .editor-controls-row {
+    position: sticky;
+    top: 60px;
+    z-index: 85;
+    background: var(--card);
+    border-top: 1px solid var(--line-soft);
+    border-bottom: 2px solid var(--line);
+    padding: 0.45rem 0.2rem;
+    margin: 0;
+    display: flex;
     flex-direction: column;
-    align-items: stretch;
+    gap: 0.45rem;
+  }
+  .editor-toolbar {
+    padding-bottom: 0.15rem;
+    gap: 0.35rem;
+    scrollbar-width: none;
+  }
+  .editor-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+  .toolbar-btn {
+    min-height: 38px;
+    min-width: 38px;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.6rem;
+    touch-action: manipulation;
+  }
+  .toolbar-btn:active {
+    background: var(--accent);
+    color: var(--accent-ink);
   }
   .editor-tab-switch {
     width: 100%;
@@ -1077,16 +1193,94 @@ img { max-width: 100%; display: block; }
   .editor-tab-switch .tab-btn {
     flex: 1;
     text-align: center;
+    min-height: 38px;
+    font-size: 0.8rem;
+    padding: 0.45rem 0.75rem;
+    touch-action: manipulation;
+  }
+  .editor-textarea {
+    min-height: 280px;
+    padding: 0.75rem 0.85rem;
+    overscroll-behavior-y: contain;
+    line-height: 1.6;
+  }
+  .editor-preview {
+    min-height: 280px;
+    padding: 1.25rem 0.85rem;
   }
   .btn-actions-row {
-    flex-direction: column;
-    align-items: stretch;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--card);
+    border-top: 2px solid var(--line);
+    padding: 0.65rem 0.85rem;
+    padding-bottom: max(0.65rem, env(safe-area-inset-bottom));
+    margin: 1.25rem -0.95rem -1rem;
+    z-index: 95;
+    display: flex;
+    flex-direction: row;
+    gap: 0.45rem;
+    align-items: center;
   }
   .btn-actions-row .btn {
-    width: 100%;
+    min-height: 44px;
+    font-size: 0.75rem;
+    padding: 0.65rem 0.55rem;
+    white-space: nowrap;
+    touch-action: manipulation;
+  }
+  #btn-publish {
+    flex: 1.4;
+    font-weight: 700;
+  }
+  #btn-save-draft {
+    flex: 1;
+  }
+  #btn-discard {
+    flex: 0 0 auto;
+    padding: 0.65rem 0.75rem;
   }
   .modal-card {
-    padding: 1.5rem 1.25rem;
+    padding: 1.5rem 1.15rem;
+    max-height: 92vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav__inner {
+    padding: 0 1rem;
+    gap: 0.5rem;
+  }
+  .nav__links {
+    gap: 0.75rem;
+  }
+  .nav__links a {
+    font-size: 0.8rem;
+  }
+  .nav-settings-label {
+    display: none;
+  }
+  #open-settings-btn {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.85rem;
+  }
+  .container {
+    padding: 0 0.85rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .btn-text-full {
+    display: none;
+  }
+  .btn-text-short {
+    display: inline;
+  }
+  .btn-actions-row .btn {
+    font-size: 0.72rem;
+    padding: 0.6rem 0.45rem;
   }
 }
 
