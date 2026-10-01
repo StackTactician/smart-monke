@@ -309,11 +309,22 @@
   <script src="app.js"></script>
   <script>
     (function () {
-      // ── Storage Keys ─────────────────────────────────────────────
+      // ── Storage Keys & Defaults ──────────────────────────────────
       const STORAGE_KEY_API_URL = 'smartmonke_publisher_url';
       const STORAGE_KEY_SECRET  = 'smartmonke_publisher_secret';
       const STORAGE_KEY_DRAFT   = 'smartmonke_active_draft_v1';
       const STORAGE_KEY_AUTHOR  = 'smartmonke_author_name';
+
+      const DEFAULT_API_URL = 'https://smartmonke-publisher.mmmoyosore09.workers.dev';
+      const DEFAULT_PUBLISH_SECRET = 'banana-monke-2026';
+
+      function getApiUrl() {
+        return localStorage.getItem(STORAGE_KEY_API_URL) || DEFAULT_API_URL;
+      }
+
+      function getSecret() {
+        return localStorage.getItem(STORAGE_KEY_SECRET) || DEFAULT_PUBLISH_SECRET;
+      }
 
       // ── Elements ─────────────────────────────────────────────────
       const titleInput       = document.getElementById('post-title');
@@ -387,8 +398,8 @@
       // ── Initial State Setup ───────────────────────────────────────
       function init() {
         // Load settings
-        const savedUrl = localStorage.getItem(STORAGE_KEY_API_URL) || '';
-        const savedSecret = localStorage.getItem(STORAGE_KEY_SECRET) || '';
+        const savedUrl = getApiUrl();
+        const savedSecret = getSecret();
         const savedAuthor = localStorage.getItem(STORAGE_KEY_AUTHOR) || 'You';
 
         cfgApiUrlInput.value = savedUrl;
@@ -418,8 +429,8 @@
       }
 
       function updateConnectionIndicator() {
-        const hasUrl = Boolean(localStorage.getItem(STORAGE_KEY_API_URL));
-        const hasSecret = Boolean(localStorage.getItem(STORAGE_KEY_SECRET));
+        const hasUrl = Boolean(getApiUrl());
+        const hasSecret = Boolean(getSecret());
         if (hasUrl && hasSecret) {
           navStatusDot.classList.add('ready');
           navStatusDot.title = 'Publisher configured';
@@ -778,8 +789,8 @@
       async function publishPost(asDraft = false) {
         clearStatus();
 
-        const apiUrl = localStorage.getItem(STORAGE_KEY_API_URL);
-        const secret = localStorage.getItem(STORAGE_KEY_SECRET);
+        const apiUrl = getApiUrl();
+        const secret = getSecret();
 
         if (!apiUrl || !secret) {
           settingsModal.classList.add('open');
